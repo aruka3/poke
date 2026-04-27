@@ -1,99 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ポケモン占い</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="stars" id="stars"></div>
-
-  <main class="container">
-    <header>
-      <h1 class="title">✨ ポケモン占い ✨</h1>
-      <p class="subtitle">今日のあなたにはどんなポケモンが現れるでしょうか...</p>
-    </header>
-
-    <section class="fortune-card" id="fortune-card">
-      <div class="card-inner" id="card-inner">
-        <div class="card-front">
-          <div class="card-symbol">🔮</div>
-          <p>カードをめくって<br>今日の運勢を知ろう</p>
-        </div>
-        <div class="card-back" id="card-back">
-          <div class="pokemon-display" id="pokemon-display">
-            <div class="loading-spinner" id="loading">
-              <div class="spinner"></div>
-            </div>
-            <div class="pokemon-content" id="pokemon-content" hidden>
-              <img id="pokemon-img" src="" alt="" class="pokemon-img" />
-              <h2 id="pokemon-name" class="pokemon-name"></h2>
-              <div class="type-badges" id="type-badges"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="fortune-result" id="fortune-result" hidden>
-      <div class="fortune-section">
-        <h3 class="fortune-title">🌟 今日の運勢</h3>
-        <p id="fortune-message" class="fortune-message"></p>
-      </div>
-
-      <div class="fortune-details">
-        <div class="detail-card">
-          <span class="detail-icon">💫</span>
-          <span class="detail-label">総合運</span>
-          <div class="stars-rating" id="overall-stars"></div>
-        </div>
-        <div class="detail-card">
-          <span class="detail-icon">❤️</span>
-          <span class="detail-label">恋愛運</span>
-          <div class="stars-rating" id="love-stars"></div>
-        </div>
-        <div class="detail-card">
-          <span class="detail-icon">💼</span>
-          <span class="detail-label">仕事運</span>
-          <div class="stars-rating" id="work-stars"></div>
-        </div>
-        <div class="detail-card">
-          <span class="detail-icon">🍀</span>
-          <span class="detail-label">金運</span>
-          <div class="stars-rating" id="money-stars"></div>
-        </div>
-      </div>
-
-      <div class="lucky-items">
-        <div class="lucky-item">
-          <span class="lucky-icon">🎨</span>
-          <span class="lucky-label">ラッキーカラー</span>
-          <span id="lucky-color" class="lucky-value"></span>
-        </div>
-        <div class="lucky-item">
-          <span class="lucky-icon">🔢</span>
-          <span class="lucky-label">ラッキーナンバー</span>
-          <span id="lucky-number" class="lucky-value"></span>
-        </div>
-        <div class="lucky-item">
-          <span class="lucky-icon">⚡</span>
-          <span class="lucky-label">ラッキーアクション</span>
-          <span id="lucky-action" class="lucky-value"></span>
-        </div>
-      </div>
-
-      <div class="advice-section">
-        <h3 class="fortune-title">🔮 ポケモンからのメッセージ</h3>
-        <p id="pokemon-advice" class="pokemon-advice"></p>
-      </div>
-    </div>
-
-    <button class="draw-btn" id="draw-btn">
-      <span class="btn-text">占う</span>
-    </button>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>今日のポケモン星座占い</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
