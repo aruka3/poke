@@ -1,5 +1,71 @@
 import { useState, useEffect } from 'react';
 
+// ── 初代151匹 タイプ別IDリスト ──────────────────────────────
+const GEN1_BY_TYPE = {
+  fire:     [4,5,6,37,38,58,59,77,78,126,136,146],
+  fighting: [56,57,62,66,67,68,106,107],
+  grass:    [1,2,3,43,44,45,46,47,69,70,71,102,103],
+  ground:   [27,28,50,51,74,75,76,95,104,105,111,112],
+  electric: [25,26,81,82,100,101,125,135,145],
+  flying:   [12,16,17,18,21,22,41,42,83,84,85,123,142,144,146],
+  water:    [7,8,9,54,55,60,61,72,73,79,80,86,87,90,91,98,99,116,117,118,119,120,121,130,131,134,138,139,140,141],
+  fairy:    [35,36,39,40,122],
+  poison:   [13,14,15,29,30,31,32,33,34,48,49,88,89,92,93,94],
+  ghost:    [92,93,94],
+  dragon:   [147,148,149],
+  rock:     [74,75,76,95,111,112,138,139,140,141,142],
+  psychic:  [63,64,65,79,80,96,97,121,122,124,150,151],
+  ice:      [87,91,124,131,144],
+  normal:   [16,17,18,19,20,52,53,83,84,85,108,128,132,133],
+};
+
+// ── ラッキーアイテム辞書 ────────────────────────────────────
+const LUCKY_ITEMS = {
+  fire:     ['赤いマグカップ','あたたかい飲み物','キャンドル','赤いスカーフ'],
+  fighting: ['スポーツタオル','プロテインバー','スニーカー','ウォーターボトル'],
+  grass:    ['観葉植物','緑のノート','ハーブティー','エコバッグ'],
+  ground:   ['テラコッタの小物','木のコースター','ブラウンの革小物','岩塩'],
+  electric: ['充電器','黄色い小物','イヤホン','モバイルバッテリー'],
+  flying:   ['白いスカーフ','羽根のしおり','空色のノート','軽いトートバッグ'],
+  water:    ['青いハンカチ','水筒','入浴剤','青いノート'],
+  fairy:    ['ピンクのリボン','小さな花','ピンクのポーチ','かわいい付箋'],
+  poison:   ['紫のポーチ','アロマオイル','ラベンダーの香り','紫のメモ帳'],
+  ghost:    ['黒いポーチ','秘密のメモ','星座の本','黒いノート'],
+  dragon:   ['ゴールドのアクセサリー','金色のペン','高級チョコレート','メタリックな小物'],
+  rock:     ['天然石','グレーのマグカップ','岩塩ランプ','鉱物標本'],
+  psychic:  ['読みかけの本','紫のペン','アロマキャンドル','クリスタル'],
+  ice:      ['白いカップ','ミントキャンディ','水色のハンカチ','クリアポーチ'],
+  normal:   ['白いノート','シンプルなペン','ベージュのポーチ','白いマグカップ'],
+};
+
+// ── わざ日本語辞書（主要Gen1わざ） ─────────────────────────
+const MOVE_JA = {
+  'pound':'はたく','scratch':'ひっかく','tackle':'たいあたり','ember':'ひのこ',
+  'water-gun':'みずでっぽう','thunder-shock':'でんきショック','razor-leaf':'はっぱカッター',
+  'vine-whip':'つるのムチ','surf':'なみのり','flamethrower':'かえんほうしゃ',
+  'psychic':'サイコキネシス','thunderbolt':'10まんボルト','ice-beam':'れいとうビーム',
+  'blizzard':'ふぶき','hyper-beam':'はかいこうせん','solar-beam':'ソーラービーム',
+  'earthquake':'じしん','fire-blast':'だいもんじ','thunder':'かみなり',
+  'bite':'かみつく','slam':'たたきつける','tail-whip':'しっぽをふる',
+  'growth':'せいちょう','sleep-powder':'ねむりごな','poison-powder':'どくのこな',
+  'swift':'スピードスター','double-edge':'すてみタックル','take-down':'とっしん',
+  'lick':'したでなめる','night-shade':'ナイトヘッド','confuse-ray':'あやしいひかり',
+  'fly':'そらをとぶ','agility':'こうそくいどう','hydro-pump':'ハイドロポンプ',
+  'fire-spin':'ほのおのうず','dragon-rage':'りゅうのいかり','wrap':'まきつく',
+  'karate-chop':'からてチョップ','seismic-toss':'ちきゅうなげ','pay-day':'ネコにこばん',
+  'leer':'にらみつける','stomp':'ふみつけ','body-slam':'のしかかり',
+  'rock-slide':'いわなだれ','dig':'あなをほる','toxic':'どくどく',
+  'bubble-beam':'バブルこうせん','peck':'つつく','drill-peck':'ドリルくちばし',
+  'pin-missile':'ミサイルばり','horn-drill':'つのドリル','spore':'キノコのほうし',
+  'flash':'フラッシュ','leech-seed':'やどりぎのたね','psybeam':'サイケこうせん',
+  'recover':'じこさいせい','high-jump-kick':'とびひざげり','double-kick':'にどげり',
+  'mega-drain':'メガドレイン','absorb':'すいとる','leech-life':'きゅうけつ',
+  'smokescreen':'けむりだま','disable':'かなしばり','screech':'いやなおと',
+  'mirror-move':'オウムがえし','selfdestruct':'じばく','explosion':'だいばくはつ',
+  'string-shot':'いとをはく','fury-attack':'みだれづき','crabhammer':'クラブハンマー',
+  'amnesia':'わすれる','splash':'はねる','glare':'へびにらみ',
+};
+
 // ── 星座データ ──────────────────────────────────────────────
 const ZODIACS = [
   { id: 'aries',       name: 'おひつじ座', symbol: '♈', date: '3/21〜4/19',   types: ['fire', 'fighting'] },
@@ -61,6 +127,55 @@ function getFortuneComment(rank, seed) {
   return pickFromArray(FORTUNE_COMMENTS.lower, seed);
 }
 
+// ── PokeAPI フェッチ ────────────────────────────────────────
+async function fetchPokemon(id) {
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+  if (!res.ok) throw new Error(`pokemon ${id} fetch failed`);
+  return res.json();
+}
+
+async function fetchSpecies(id) {
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+    if (!res.ok) return null;
+    return res.json();
+  } catch { return null; }
+}
+
+function getJaName(species) {
+  if (!species) return null;
+  const e = species.names.find(n => n.language.name === 'ja-Hrkt' || n.language.name === 'ja');
+  return e?.name ?? null;
+}
+
+function selectPokemonId(zodiacId, seed) {
+  const z = ZODIACS.find(z => z.id === zodiacId);
+  let ids = [];
+  for (const type of z.types) ids = [...ids, ...(GEN1_BY_TYPE[type] ?? [])];
+  ids = [...new Set(ids)];
+  if (ids.length === 0) ids = GEN1_BY_TYPE.normal;
+  return pickFromArray(ids, seed + hashString(zodiacId));
+}
+
+function selectLuckyMove(moves, seed) {
+  if (!moves?.length) return 'たいあたり';
+  const gen1 = moves.filter(m =>
+    m.version_group_details.some(d => ['red-blue','yellow'].includes(d.version_group.name))
+  );
+  const pool = gen1.length > 0 ? gen1 : moves;
+  const name = pickFromArray(pool, seed)?.move?.name ?? 'tackle';
+  return MOVE_JA[name] ?? name;
+}
+
+function getLuckyItem(zodiacId, seed) {
+  const z = ZODIACS.find(z => z.id === zodiacId);
+  for (const type of z.types) {
+    const items = LUCKY_ITEMS[type];
+    if (items?.length) return pickFromArray(items, seed + hashString(zodiacId) + 999);
+  }
+  return pickFromArray(LUCKY_ITEMS.normal, seed);
+}
+
 function generateRanking(seed) {
   return seededShuffle(ZODIACS.map(z => z.id), seed).map((id, i) => {
     const rank = i + 1;
@@ -83,6 +198,28 @@ const S = {
 };
 
 // ── TOP3 カード ─────────────────────────────────────────────
+function PokemonInfo({ entry }) {
+  return (
+    <>
+      {entry.sprite
+        ? <img src={entry.sprite} alt={entry.pokemonName} style={{ width:'100px', height:'100px', objectFit:'contain', display:'block', margin:'8px auto', filter:'drop-shadow(0 4px 8px rgba(0,0,0,0.15))' }} />
+        : <div style={{ width:'100px', height:'100px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'3rem', margin:'8px auto', background:'#f3f4f6', borderRadius:'50%' }}>？</div>
+      }
+      <p style={{ textAlign:'center', fontWeight:'bold', fontSize:'1rem', margin:'0 0 8px' }}>{entry.pokemonName}</p>
+      <div style={{ borderTop:'1px solid rgba(0,0,0,0.08)', paddingTop:'8px', display:'flex', flexDirection:'column', gap:'4px' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.8rem' }}>
+          <span style={{ color:'#6b7280' }}>⚡ ラッキーわざ</span>
+          <span style={{ fontWeight:'bold', color:'#374151' }}>{entry.luckyMove}</span>
+        </div>
+        <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.8rem' }}>
+          <span style={{ color:'#6b7280' }}>🎁 ラッキーアイテム</span>
+          <span style={{ fontWeight:'bold', color:'#374151' }}>{entry.luckyItem}</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function Top3Card({ entry, isUser }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
   const rs = RANK_STYLE[entry.rank];
@@ -93,16 +230,17 @@ function Top3Card({ entry, isUser }) {
           あなた
         </span>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
         <span style={{ fontSize: '2rem' }}>{rs.medal}</span>
         <div>
           <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{z.symbol} {z.name}</div>
           <div style={{ fontSize: '0.75rem', color: '#888' }}>{z.date}</div>
         </div>
       </div>
-      <p style={{ fontSize: '0.9rem', color: '#444', lineHeight: '1.6', fontStyle: 'italic', margin: 0 }}>
+      <p style={{ fontSize: '0.9rem', color: '#444', lineHeight: '1.6', fontStyle: 'italic', margin: '0 0 4px' }}>
         「{entry.comment}」
       </p>
+      <PokemonInfo entry={entry} />
     </div>
   );
 }
@@ -135,17 +273,18 @@ function UserFortuneCard({ entry, onChangeZodiac }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
   return (
     <div style={S.card}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
         <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#7c6bca' }}>{entry.rank}位</span>
         <div>
           <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{z.symbol} {z.name}</div>
           <div style={{ fontSize: '0.75rem', color: '#888' }}>{z.date}</div>
         </div>
       </div>
-      <p style={{ fontSize: '0.9rem', color: '#444', lineHeight: '1.6', fontStyle: 'italic', margin: 0 }}>
+      <p style={{ fontSize: '0.9rem', color: '#444', lineHeight: '1.6', fontStyle: 'italic', margin: '0 0 4px' }}>
         「{entry.comment}」
       </p>
-      <div style={{ textAlign: 'right' }}>
+      <PokemonInfo entry={entry} />
+      <div style={{ textAlign: 'right', marginTop: '8px' }}>
         <button style={S.changeBtn} onClick={onChangeZodiac}>星座を変更する</button>
       </div>
     </div>
@@ -154,8 +293,9 @@ function UserFortuneCard({ entry, onChangeZodiac }) {
 
 // ── App ────────────────────────────────────────────────────
 export default function App() {
-  const [ranking, setRanking]         = useState([]);
-  const [userZodiac, setUserZodiac]   = useState(() => localStorage.getItem('userZodiac'));
+  const [ranking, setRanking]           = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [userZodiac, setUserZodiac]     = useState(() => localStorage.getItem('userZodiac'));
   const [showSelector, setShowSelector] = useState(!localStorage.getItem('userZodiac'));
 
   const seed = getDailySeed();
@@ -163,7 +303,30 @@ export default function App() {
   const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
 
   useEffect(() => {
-    setRanking(generateRanking(seed));
+    const base = generateRanking(seed);
+    Promise.all(
+      base.map(async entry => {
+        try {
+          const pokemonId = selectPokemonId(entry.zodiacId, seed);
+          const [pokemon, species] = await Promise.all([
+            fetchPokemon(pokemonId),
+            fetchSpecies(pokemonId),
+          ]);
+          const jaName   = getJaName(species) ?? pokemon.name;
+          const sprite   = pokemon.sprites?.other?.['official-artwork']?.front_default
+                        ?? pokemon.sprites?.front_default ?? null;
+          const move     = selectLuckyMove(pokemon.moves, seed + hashString(entry.zodiacId) + 777);
+          const item     = getLuckyItem(entry.zodiacId, seed);
+          return { ...entry, pokemonName: jaName, sprite, luckyMove: move, luckyItem: item };
+        } catch {
+          return { ...entry, pokemonName: '？', sprite: null,
+            luckyMove: 'たいあたり', luckyItem: getLuckyItem(entry.zodiacId, seed) };
+        }
+      })
+    ).then(results => {
+      setRanking(results);
+      setLoading(false);
+    });
   }, []);
 
   function handleSelect(zodiacId) {
@@ -179,6 +342,14 @@ export default function App() {
   const top3       = ranking.slice(0, 3);
   const userEntry  = ranking.find(r => r.zodiacId === userZodiac);
   const userInTop3 = userEntry && userEntry.rank <= 3;
+
+  if (loading) return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100vh', gap:'12px', fontFamily:'sans-serif' }}>
+      <div style={{ width:'40px', height:'40px', border:'4px solid #e5e7eb', borderTopColor:'#7c6bca', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <p style={{ color:'#888' }}>星の声を聞いています...</p>
+    </div>
+  );
 
   return (
     <div style={S.page}>
