@@ -191,6 +191,21 @@ const RANK_STYLE = {
   3: { border: '#d4956a', illust: 'linear-gradient(135deg,#fff3eb,#fdd5b0)', medal: '🥉', hp: 55 },
 };
 
+// ── タイプ別ヘッダー色 (ポケカの帯色) ────────────────────
+const TYPE_HEADER = {
+  fire:     '#E8673A', water:    '#5B8FE8', grass:    '#62B345',
+  electric: '#D4A800', psychic:  '#E0447A', ghost:    '#5C4080',
+  dragon:   '#5828D8', fairy:    '#D870A0', fighting: '#A82828',
+  poison:   '#8830A0', ground:   '#C09030', rock:     '#9A8030',
+  ice:      '#60B8C0', flying:   '#8878D8', normal:   '#888860',
+  default:  '#7c6bca',
+};
+
+// ── ランクからHP計算 ──────────────────────────────────────
+function rankToHp(rank) {
+  return Math.max(130 - rank * 10, 20);
+}
+
 // ── タイプ別イラスト背景カラー ────────────────────────────
 const TYPE_ILLUST = {
   fire:     'linear-gradient(135deg,#ffe0c0,#ffaa60)',
@@ -214,22 +229,24 @@ const TYPE_ILLUST = {
 function Top3Card({ entry, isUser }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
   const rs = RANK_STYLE[entry.rank];
-  const illustBg = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
+  const illustBg  = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
+  const headerColor = TYPE_HEADER[z.types[0]] ?? TYPE_HEADER.default;
+  const hp = rankToHp(entry.rank);
   return (
     <div className="poke-card" style={{ borderColor: rs.border }}>
       {isUser && <span className="badge-you">あなた</span>}
 
-      {/* カード上部 */}
-      <div className="poke-card-top">
+      {/* タイプカラー帯ヘッダー */}
+      <div className="poke-card-top" style={{ background: headerColor }}>
         <div className="poke-card-left">
           <span className="poke-card-medal">{rs.medal}</span>
           <div>
             <div className="poke-card-zodiac-name">{z.symbol} {z.name}</div>
-            <div className="poke-card-zodiac-date">{z.date}</div>
+            <div className="poke-card-zodiac-date" style={{ color:'rgba(255,255,255,0.75)' }}>{z.date}</div>
           </div>
         </div>
         <div className="poke-card-hp">
-          HP <span className="poke-card-hp-val">{rs.hp}</span>
+          HP <span className="poke-card-hp-val">{hp}</span>
         </div>
       </div>
 
@@ -282,18 +299,25 @@ function ZodiacSelector({ onSelect }) {
 // ── 自分の運勢カード (TOP3外) ───────────────────────────────
 function UserFortuneCard({ entry, onChangeZodiac }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
-  const illustBg = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
+  const illustBg    = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
+  const headerColor = TYPE_HEADER[z.types[0]] ?? TYPE_HEADER.default;
+  const hp = rankToHp(entry.rank);
   return (
     <div className="poke-card" style={{ borderColor: '#a78bfa' }}>
-      <div className="poke-card-top">
+      <div className="poke-card-top" style={{ background: headerColor }}>
         <div className="poke-card-left">
-          <span style={{ fontSize:'1.4rem', fontWeight:'bold', color:'#7c6bca', lineHeight:1 }}>{entry.rank}位</span>
+          <span style={{ fontSize:'1.3rem', fontWeight:'bold', color:'rgba(255,255,255,0.9)', lineHeight:1, marginRight:'4px' }}>{entry.rank}位</span>
           <div>
             <div className="poke-card-zodiac-name">{z.symbol} {z.name}</div>
-            <div className="poke-card-zodiac-date">{z.date}</div>
+            <div className="poke-card-zodiac-date" style={{ color:'rgba(255,255,255,0.75)' }}>{z.date}</div>
           </div>
         </div>
-        <span className="badge-you" style={{ position:'static', marginLeft:'auto' }}>あなた</span>
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px' }}>
+          <div className="poke-card-hp">
+            HP <span className="poke-card-hp-val" style={{ color:'#fff' }}>{hp}</span>
+          </div>
+          <span className="badge-you" style={{ position:'static' }}>あなた</span>
+        </div>
       </div>
 
       <div className="poke-card-illust" style={{ background: illustBg }}>
