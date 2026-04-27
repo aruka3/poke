@@ -184,29 +184,38 @@ function generateRanking(seed) {
   });
 }
 
-// ── ランク別カード設定 ────────────────────────────────────
+// ── ランク別ボーダー色 ────────────────────────────────────
 const RANK_STYLE = {
-  1: { border: '#e0c050', illust: 'linear-gradient(135deg,#fff9db,#ffe88a)', medal: '🥇', hp: 90 },
-  2: { border: '#a0aec0', illust: 'linear-gradient(135deg,#eef2f7,#c8d6e5)', medal: '🥈', hp: 70 },
-  3: { border: '#d4956a', illust: 'linear-gradient(135deg,#fff3eb,#fdd5b0)', medal: '🥉', hp: 55 },
+  1: { border: '#d4a800', medal: '🥇' },
+  2: { border: '#909aac', medal: '🥈' },
+  3: { border: '#c07840', medal: '🥉' },
 };
 
-// ── タイプ別ヘッダー色 (ポケカの帯色) ────────────────────
+// ── タイプ別カード背景色 (本物ポケカの薄い地色) ───────────
+const TYPE_CARD_BG = {
+  fire:'#FFF0E0', water:'#E8F0FF', grass:'#E8F8E0', electric:'#FFFCE0',
+  psychic:'#FFE8F4', ghost:'#EAE4F4', dragon:'#E8E0FF', fairy:'#FFE4F4',
+  fighting:'#FFE8E4', poison:'#F4E4FF', ground:'#FFF4D8', rock:'#F4F0DC',
+  ice:'#E4F8F8', flying:'#EEEAFF', normal:'#F4F4EC', default:'#EEE8FF',
+};
+
+// ── タイプ別ヘッダー帯色 ─────────────────────────────────
 const TYPE_HEADER = {
-  fire:     '#E8673A', water:    '#5B8FE8', grass:    '#62B345',
-  electric: '#D4A800', psychic:  '#E0447A', ghost:    '#5C4080',
-  dragon:   '#5828D8', fairy:    '#D870A0', fighting: '#A82828',
-  poison:   '#8830A0', ground:   '#C09030', rock:     '#9A8030',
-  ice:      '#60B8C0', flying:   '#8878D8', normal:   '#888860',
-  default:  '#7c6bca',
+  fire:'#E8673A', water:'#5B8FE8', grass:'#62B345', electric:'#C49A00',
+  psychic:'#E0447A', ghost:'#5C4080', dragon:'#5828D8', fairy:'#D870A0',
+  fighting:'#A82828', poison:'#8830A0', ground:'#C09030', rock:'#9A8030',
+  ice:'#60B8C0', flying:'#8878D8', normal:'#888860', default:'#7c6bca',
 };
 
-// ── ランクからHP計算 ──────────────────────────────────────
-function rankToHp(rank) {
-  return Math.max(130 - rank * 10, 20);
-}
+// ── タイプ別弱点 ─────────────────────────────────────────
+const TYPE_WEAKNESS = {
+  fire:'水×2', water:'草×2', grass:'炎×2', electric:'地×2',
+  psychic:'悪×2', ghost:'悪×2', dragon:'氷×2', fairy:'鋼×2',
+  fighting:'超×2', poison:'地×2', ground:'水×2', rock:'水×2',
+  ice:'炎×2', flying:'電×2', normal:'闘×2', default:'−',
+};
 
-// ── タイプ別イラスト背景カラー ────────────────────────────
+// ── タイプ別イラスト背景 ─────────────────────────────────
 const TYPE_ILLUST = {
   fire:     'linear-gradient(135deg,#ffe0c0,#ffaa60)',
   water:    'linear-gradient(135deg,#c8e0ff,#88b0ff)',
@@ -226,55 +235,73 @@ const TYPE_ILLUST = {
   default:  'linear-gradient(135deg,#e8e0f8,#c8b8f0)',
 };
 
-function Top3Card({ entry, isUser }) {
-  const z = ZODIACS.find(z => z.id === entry.zodiacId);
-  const rs = RANK_STYLE[entry.rank];
-  const illustBg  = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
-  const headerColor = TYPE_HEADER[z.types[0]] ?? TYPE_HEADER.default;
-  const hp = rankToHp(entry.rank);
-  return (
-    <div className="poke-card" style={{ borderColor: rs.border }}>
-      {isUser && <span className="badge-you">あなた</span>}
+function PokeCard({ entry, isUser, borderColor }) {
+  const z           = ZODIACS.find(z => z.id === entry.zodiacId);
+  const primaryType = z.types[0];
+  const headerColor = TYPE_HEADER[primaryType] ?? TYPE_HEADER.default;
+  const cardBg      = TYPE_CARD_BG[primaryType] ?? TYPE_CARD_BG.default;
+  const illustBg    = TYPE_ILLUST[primaryType]  ?? TYPE_ILLUST.default;
+  const weakness    = TYPE_WEAKNESS[primaryType] ?? TYPE_WEAKNESS.default;
+  const rs          = RANK_STYLE[entry.rank] ?? { medal: `${entry.rank}位` };
+  const hp          = entry.hp ?? '−';
 
-      {/* タイプカラー帯ヘッダー */}
+  return (
+    <div className="poke-card" style={{ borderColor, background: cardBg }}>
+      {/* ① ヘッダー帯: 名前 + HP */}
       <div className="poke-card-top" style={{ background: headerColor }}>
         <div className="poke-card-left">
           <span className="poke-card-medal">{rs.medal}</span>
           <div>
             <div className="poke-card-zodiac-name">{z.symbol} {z.name}</div>
-            <div className="poke-card-zodiac-date" style={{ color:'rgba(255,255,255,0.75)' }}>{z.date}</div>
+            <div className="poke-card-zodiac-date">{z.date}</div>
           </div>
         </div>
-        <div className="poke-card-hp">
-          HP <span className="poke-card-hp-val">{hp}</span>
+        <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+          {isUser && <span className="badge-you" style={{ position:'static' }}>あなた</span>}
+          <div className="poke-card-hp">HP <span className="poke-card-hp-val">{hp}</span></div>
         </div>
       </div>
 
-      {/* イラスト枠 */}
+      {/* ② イラスト枠 */}
       <div className="poke-card-illust" style={{ background: illustBg }}>
         {entry.sprite
           ? <img src={entry.sprite} alt={entry.pokemonName} className="poke-card-sprite" />
-          : <span className="poke-card-no-sprite">？</span>
-        }
+          : <span className="poke-card-no-sprite">？</span>}
       </div>
 
-      {/* カード下部 */}
+      {/* ③ ポケモン名 */}
       <div className="poke-card-body">
         <p className="poke-card-name">{entry.pokemonName ?? '...'}</p>
-        <p className="poke-card-comment">「{entry.comment}」</p>
-        <div className="poke-card-moves">
-          <div className="poke-card-move-row">
-            <span className="poke-card-move-label">⚡ ラッキーわざ</span>
-            <span className="poke-card-move-val">{entry.luckyMove}</span>
+
+        {/* ④ わざ行 */}
+        <div className="poke-move-section">
+          <div className="poke-move-header">
+            <span className="poke-move-name">⚡ {entry.luckyMove}</span>
           </div>
-          <div className="poke-card-move-row">
-            <span className="poke-card-move-label">🎁 ラッキーアイテム</span>
-            <span className="poke-card-move-val">{entry.luckyItem}</span>
+          <p className="poke-move-desc">「{entry.comment}」</p>
+        </div>
+
+        <div className="poke-move-section" style={{ marginTop:'6px' }}>
+          <div className="poke-move-header">
+            <span className="poke-move-name">🎁 ラッキーアイテム</span>
+            <span className="poke-move-damage">{entry.luckyItem}</span>
           </div>
+        </div>
+
+        {/* ⑤ フッター: 弱点・耐性・にげる */}
+        <div className="poke-footer">
+          <span><b>弱点</b> {weakness}</span>
+          <span><b>耐性</b> −</span>
+          <span><b>にげる</b> ●</span>
         </div>
       </div>
     </div>
   );
+}
+
+function Top3Card({ entry, isUser }) {
+  const rs = RANK_STYLE[entry.rank];
+  return <PokeCard entry={entry} isUser={isUser} borderColor={rs.border} />;
 }
 
 // ── 星座選択UI ──────────────────────────────────────────────
@@ -298,48 +325,10 @@ function ZodiacSelector({ onSelect }) {
 
 // ── 自分の運勢カード (TOP3外) ───────────────────────────────
 function UserFortuneCard({ entry, onChangeZodiac }) {
-  const z = ZODIACS.find(z => z.id === entry.zodiacId);
-  const illustBg    = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
-  const headerColor = TYPE_HEADER[z.types[0]] ?? TYPE_HEADER.default;
-  const hp = rankToHp(entry.rank);
   return (
-    <div className="poke-card" style={{ borderColor: '#a78bfa' }}>
-      <div className="poke-card-top" style={{ background: headerColor }}>
-        <div className="poke-card-left">
-          <span style={{ fontSize:'1.3rem', fontWeight:'bold', color:'rgba(255,255,255,0.9)', lineHeight:1, marginRight:'4px' }}>{entry.rank}位</span>
-          <div>
-            <div className="poke-card-zodiac-name">{z.symbol} {z.name}</div>
-            <div className="poke-card-zodiac-date" style={{ color:'rgba(255,255,255,0.75)' }}>{z.date}</div>
-          </div>
-        </div>
-        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px' }}>
-          <div className="poke-card-hp">
-            HP <span className="poke-card-hp-val" style={{ color:'#fff' }}>{hp}</span>
-          </div>
-          <span className="badge-you" style={{ position:'static' }}>あなた</span>
-        </div>
-      </div>
-
-      <div className="poke-card-illust" style={{ background: illustBg }}>
-        {entry.sprite
-          ? <img src={entry.sprite} alt={entry.pokemonName} className="poke-card-sprite" />
-          : <span className="poke-card-no-sprite">？</span>
-        }
-      </div>
-
-      <div className="poke-card-body">
-        <p className="poke-card-name">{entry.pokemonName ?? '...'}</p>
-        <p className="poke-card-comment">「{entry.comment}」</p>
-        <div className="poke-card-moves">
-          <div className="poke-card-move-row">
-            <span className="poke-card-move-label">⚡ ラッキーわざ</span>
-            <span className="poke-card-move-val">{entry.luckyMove}</span>
-          </div>
-          <div className="poke-card-move-row">
-            <span className="poke-card-move-label">🎁 ラッキーアイテム</span>
-            <span className="poke-card-move-val">{entry.luckyItem}</span>
-          </div>
-        </div>
+    <div>
+      <PokeCard entry={entry} isUser={true} borderColor="#a78bfa" />
+      <div style={{ textAlign:'right', marginTop:'-6px', marginBottom:'12px' }}>
         <button className="change-btn" onClick={onChangeZodiac}>星座を変更する</button>
       </div>
     </div>
@@ -407,7 +396,8 @@ export default function App() {
                         ?? pokemon.sprites?.front_default ?? null;
           const move     = selectLuckyMove(pokemon.moves, seed + hashString(entry.zodiacId) + 777);
           const item     = getLuckyItem(entry.zodiacId, seed);
-          return { ...entry, pokemonName: jaName, sprite, luckyMove: move, luckyItem: item };
+          const hp       = pokemon.stats?.find(s => s.stat.name === 'hp')?.base_stat ?? 50;
+          return { ...entry, pokemonName: jaName, sprite, luckyMove: move, luckyItem: item, hp };
         } catch {
           return { ...entry, pokemonName: '？', sprite: null,
             luckyMove: 'たいあたり', luckyItem: getLuckyItem(entry.zodiacId, seed) };

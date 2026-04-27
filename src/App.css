@@ -128,44 +128,62 @@ body {
 
 /* カード下部 */
 .poke-card-body {
-  padding: 4px 14px 14px;
+  padding: 6px 12px 10px;
 }
 .poke-card-name {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #1a1a1a;
-  margin-bottom: 6px;
-  text-align: center;
-}
-.poke-card-comment {
-  font-size: 0.78rem;
-  color: #555;
-  font-style: italic;
-  line-height: 1.6;
-  text-align: center;
-  border-top: 1px solid rgba(0,0,0,0.08);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  padding: 6px 0;
   margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: 0.03em;
 }
-.poke-card-moves {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+
+/* わざセクション (本物ポケカのわざ行) */
+.poke-move-section {
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 5px;
 }
-.poke-card-move-row {
+.poke-move-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.8rem;
+  margin-bottom: 3px;
 }
-.poke-card-move-label { color: #666; }
-.poke-card-move-val {
+.poke-move-name {
+  font-size: 0.88rem;
   font-weight: bold;
   color: #1a1a1a;
+}
+.poke-move-damage {
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #333;
   text-align: right;
   max-width: 55%;
 }
+.poke-move-desc {
+  font-size: 0.74rem;
+  color: #555;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+/* フッター: 弱点・耐性・にげる */
+.poke-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1.5px solid rgba(0,0,0,0.12);
+  font-size: 0.72rem;
+  color: #555;
+}
+.poke-footer b { color: #333; margin-right: 2px; }
 
 /* あなたバッジ */
 .badge-you {
