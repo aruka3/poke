@@ -291,12 +291,53 @@ function UserFortuneCard({ entry, onChangeZodiac }) {
   );
 }
 
+// ── 4位〜12位 アコーディオン ───────────────────────────────
+function AccordionItem({ entry, isUser, isOpen, onToggle }) {
+  const z = ZODIACS.find(z => z.id === entry.zodiacId);
+  return (
+    <div style={{
+      background: 'white',
+      borderRadius: '12px',
+      marginBottom: '6px',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+      overflow: 'hidden',
+      borderLeft: isUser ? '3px solid #a78bfa' : '3px solid transparent',
+    }}>
+      <button
+        onClick={onToggle}
+        style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px', padding:'12px 14px', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit', textAlign:'left' }}
+      >
+        <span style={{ minWidth:'28px', fontSize:'0.85rem', fontWeight:'bold', color:'#6b7280' }}>{entry.rank}位</span>
+        <span style={{ fontSize:'1rem' }}>{z.symbol}</span>
+        <span style={{ flex:1, fontSize:'0.85rem', fontWeight:'bold', color:'#374151' }}>{z.name}</span>
+        {entry.pokemonName && (
+          <span style={{ fontSize:'0.8rem', color:'#7c6bca' }}>{entry.pokemonName}</span>
+        )}
+        {isUser && (
+          <span style={{ fontSize:'0.65rem', background:'#fde68a', color:'#7c3a00', padding:'1px 6px', borderRadius:'10px', fontWeight:'bold' }}>あなた</span>
+        )}
+        <span style={{ fontSize:'0.7rem', color:'#9ca3af', marginLeft:'4px' }}>{isOpen ? '▲' : '▼'}</span>
+      </button>
+
+      {isOpen && (
+        <div style={{ padding:'0 14px 14px', borderTop:'1px solid #f3f4f6' }}>
+          <PokemonInfo entry={entry} />
+          <p style={{ fontSize:'0.82rem', color:'#555', fontStyle:'italic', lineHeight:'1.6', margin:'8px 0 0', textAlign:'center' }}>
+            「{entry.comment}」
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── App ────────────────────────────────────────────────────
 export default function App() {
   const [ranking, setRanking]           = useState([]);
   const [loading, setLoading]           = useState(true);
   const [userZodiac, setUserZodiac]     = useState(() => localStorage.getItem('userZodiac'));
   const [showSelector, setShowSelector] = useState(!localStorage.getItem('userZodiac'));
+  const [openAccordion, setOpenAccordion] = useState(null);
 
   const seed = getDailySeed();
   const today = new Date();
@@ -382,14 +423,21 @@ export default function App() {
         <UserFortuneCard entry={userEntry} onChangeZodiac={handleChangeZodiac} />
       ) : null}
 
-      {/* 全ランキング (仮) */}
-      <h2 style={S.sectionTitle}>📋 全星座ランキング</h2>
-      <ol style={{ lineHeight: '2', paddingLeft: '20px' }}>
-        {ranking.map(({ zodiacId, rank }) => {
-          const z = ZODIACS.find(z => z.id === zodiacId);
-          return <li key={zodiacId}>{z.symbol} {z.name}</li>;
-        })}
-      </ol>
+      {/* 4位〜12位 アコーディオン */}
+      <h2 style={S.sectionTitle}>📋 全星座ランキング（4〜12位）</h2>
+      <div>
+        {ranking.slice(3).map(entry => (
+          <AccordionItem
+            key={entry.zodiacId}
+            entry={entry}
+            isUser={entry.zodiacId === userZodiac}
+            isOpen={openAccordion === entry.zodiacId}
+            onToggle={() => setOpenAccordion(
+              openAccordion === entry.zodiacId ? null : entry.zodiacId
+            )}
+          />
+        ))}
+      </div>
     </div>
   );
 }
