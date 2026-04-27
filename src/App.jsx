@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './App.css';
 
 // ── 初代151匹 タイプ別IDリスト ──────────────────────────────
 const GEN1_BY_TYPE = {
@@ -183,18 +184,11 @@ function generateRanking(seed) {
   });
 }
 
-// ── スタイル定数 ────────────────────────────────────────────
+// ── TOP3スタイル (rank別のカラーのみ inline) ──────────────
 const RANK_STYLE = {
-  1: { bg: 'linear-gradient(135deg, #fffbeb, #fef3c7)', border: '#f59e0b', medal: '🥇' },
-  2: { bg: 'linear-gradient(135deg, #f8fafc, #e2e8f0)', border: '#94a3b8', medal: '🥈' },
-  3: { bg: 'linear-gradient(135deg, #fff7ed, #fde8d0)', border: '#fb923c', medal: '🥉' },
-};
-
-const S = {
-  page:        { padding: '16px', fontFamily: "'Hiragino Kaku Gothic ProN', 'YuGothic', sans-serif", maxWidth: '480px', margin: '0 auto', color: '#333' },
-  sectionTitle:{ fontSize: '1rem', fontWeight: 'bold', margin: '24px 0 12px', color: '#5b4f8a' },
-  card:        { background: 'white', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '20px', marginBottom: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' },
-  changeBtn:   { marginTop: '12px', background: 'none', border: '1px solid #d1d5db', borderRadius: '20px', padding: '6px 16px', fontSize: '0.8rem', color: '#6b7280', cursor: 'pointer', fontFamily: 'inherit' },
+  1: { bg: 'linear-gradient(135deg,#fffbeb,#fef3c7)', border: '#f59e0b', medal: '🥇' },
+  2: { bg: 'linear-gradient(135deg,#f8fafc,#e2e8f0)', border: '#94a3b8', medal: '🥈' },
+  3: { bg: 'linear-gradient(135deg,#fff7ed,#fde8d0)', border: '#fb923c', medal: '🥉' },
 };
 
 // ── TOP3 カード ─────────────────────────────────────────────
@@ -202,18 +196,18 @@ function PokemonInfo({ entry }) {
   return (
     <>
       {entry.sprite
-        ? <img src={entry.sprite} alt={entry.pokemonName} style={{ width:'100px', height:'100px', objectFit:'contain', display:'block', margin:'8px auto', filter:'drop-shadow(0 4px 8px rgba(0,0,0,0.15))' }} />
-        : <div style={{ width:'100px', height:'100px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'3rem', margin:'8px auto', background:'#f3f4f6', borderRadius:'50%' }}>？</div>
+        ? <img src={entry.sprite} alt={entry.pokemonName} className="pokemon-img" />
+        : <div className="pokemon-placeholder">？</div>
       }
-      <p style={{ textAlign:'center', fontWeight:'bold', fontSize:'1rem', margin:'0 0 8px' }}>{entry.pokemonName}</p>
-      <div style={{ borderTop:'1px solid rgba(0,0,0,0.08)', paddingTop:'8px', display:'flex', flexDirection:'column', gap:'4px' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.8rem' }}>
-          <span style={{ color:'#6b7280' }}>⚡ ラッキーわざ</span>
-          <span style={{ fontWeight:'bold', color:'#374151' }}>{entry.luckyMove}</span>
+      <p className="pokemon-name">{entry.pokemonName}</p>
+      <div className="lucky-rows">
+        <div className="lucky-row">
+          <span className="lucky-label">⚡ ラッキーわざ</span>
+          <span className="lucky-val">{entry.luckyMove}</span>
         </div>
-        <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.8rem' }}>
-          <span style={{ color:'#6b7280' }}>🎁 ラッキーアイテム</span>
-          <span style={{ fontWeight:'bold', color:'#374151' }}>{entry.luckyItem}</span>
+        <div className="lucky-row">
+          <span className="lucky-label">🎁 ラッキーアイテム</span>
+          <span className="lucky-val">{entry.luckyItem}</span>
         </div>
       </div>
     </>
@@ -224,22 +218,16 @@ function Top3Card({ entry, isUser }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
   const rs = RANK_STYLE[entry.rank];
   return (
-    <div style={{ ...S.card, background: rs.bg, border: `2px solid ${rs.border}`, position: 'relative' }}>
-      {isUser && (
-        <span style={{ position: 'absolute', top: '12px', right: '12px', background: 'linear-gradient(135deg,#f59e0b,#fde68a)', color: '#7c3a00', fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 10px', borderRadius: '20px' }}>
-          あなた
-        </span>
-      )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-        <span style={{ fontSize: '2rem' }}>{rs.medal}</span>
+    <div className="top3-card" style={{ background: rs.bg, border: `2px solid ${rs.border}` }}>
+      {isUser && <span className="badge-you">あなた</span>}
+      <div className="top3-card-header">
+        <span className="top3-medal">{rs.medal}</span>
         <div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{z.symbol} {z.name}</div>
-          <div style={{ fontSize: '0.75rem', color: '#888' }}>{z.date}</div>
+          <div className="top3-zodiac-name">{z.symbol} {z.name}</div>
+          <div className="top3-zodiac-date">{z.date}</div>
         </div>
       </div>
-      <p style={{ fontSize: '0.9rem', color: '#444', lineHeight: '1.6', fontStyle: 'italic', margin: '0 0 4px' }}>
-        「{entry.comment}」
-      </p>
+      <p className="top3-comment">「{entry.comment}」</p>
       <PokemonInfo entry={entry} />
     </div>
   );
@@ -248,19 +236,15 @@ function Top3Card({ entry, isUser }) {
 // ── 星座選択UI ──────────────────────────────────────────────
 function ZodiacSelector({ onSelect }) {
   return (
-    <div style={S.card}>
-      <p style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>どの星のもとに生まれましたか？</p>
-      <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '16px' }}>あなたの星座を選んでください</p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+    <div className="card">
+      <p className="zodiac-selector-title">どの星のもとに生まれましたか？</p>
+      <p className="zodiac-selector-sub">あなたの星座を選んでください</p>
+      <div className="zodiac-grid">
         {ZODIACS.map(z => (
-          <button
-            key={z.id}
-            onClick={() => onSelect(z.id)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 4px', border: '1.5px solid #e5e7eb', borderRadius: '12px', background: 'white', cursor: 'pointer', fontFamily: 'inherit', gap: '2px' }}
-          >
-            <span style={{ fontSize: '1.4rem' }}>{z.symbol}</span>
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#374151' }}>{z.name}</span>
-            <span style={{ fontSize: '0.6rem', color: '#9ca3af' }}>{z.date}</span>
+          <button key={z.id} className="zodiac-btn" onClick={() => onSelect(z.id)}>
+            <span className="zodiac-btn-symbol">{z.symbol}</span>
+            <span className="zodiac-btn-name">{z.name}</span>
+            <span className="zodiac-btn-date">{z.date}</span>
           </button>
         ))}
       </div>
@@ -272,21 +256,17 @@ function ZodiacSelector({ onSelect }) {
 function UserFortuneCard({ entry, onChangeZodiac }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
   return (
-    <div style={S.card}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-        <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#7c6bca' }}>{entry.rank}位</span>
+    <div className="card">
+      <div className="user-card-header">
+        <span className="user-rank">{entry.rank}位</span>
         <div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{z.symbol} {z.name}</div>
-          <div style={{ fontSize: '0.75rem', color: '#888' }}>{z.date}</div>
+          <div className="user-zodiac-name">{z.symbol} {z.name}</div>
+          <div className="user-zodiac-date">{z.date}</div>
         </div>
       </div>
-      <p style={{ fontSize: '0.9rem', color: '#444', lineHeight: '1.6', fontStyle: 'italic', margin: '0 0 4px' }}>
-        「{entry.comment}」
-      </p>
+      <p className="user-comment">「{entry.comment}」</p>
       <PokemonInfo entry={entry} />
-      <div style={{ textAlign: 'right', marginTop: '8px' }}>
-        <button style={S.changeBtn} onClick={onChangeZodiac}>星座を変更する</button>
-      </div>
+      <button className="change-btn" onClick={onChangeZodiac}>星座を変更する</button>
     </div>
   );
 }
@@ -295,36 +275,19 @@ function UserFortuneCard({ entry, onChangeZodiac }) {
 function AccordionItem({ entry, isUser, isOpen, onToggle }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
   return (
-    <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      marginBottom: '6px',
-      boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-      overflow: 'hidden',
-      borderLeft: isUser ? '3px solid #a78bfa' : '3px solid transparent',
-    }}>
-      <button
-        onClick={onToggle}
-        style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px', padding:'12px 14px', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit', textAlign:'left' }}
-      >
-        <span style={{ minWidth:'28px', fontSize:'0.85rem', fontWeight:'bold', color:'#6b7280' }}>{entry.rank}位</span>
-        <span style={{ fontSize:'1rem' }}>{z.symbol}</span>
-        <span style={{ flex:1, fontSize:'0.85rem', fontWeight:'bold', color:'#374151' }}>{z.name}</span>
-        {entry.pokemonName && (
-          <span style={{ fontSize:'0.8rem', color:'#7c6bca' }}>{entry.pokemonName}</span>
-        )}
-        {isUser && (
-          <span style={{ fontSize:'0.65rem', background:'#fde68a', color:'#7c3a00', padding:'1px 6px', borderRadius:'10px', fontWeight:'bold' }}>あなた</span>
-        )}
-        <span style={{ fontSize:'0.7rem', color:'#9ca3af', marginLeft:'4px' }}>{isOpen ? '▲' : '▼'}</span>
+    <div className={`accordion-item${isUser ? ' is-user' : ''}`}>
+      <button className="accordion-btn" onClick={onToggle}>
+        <span className="acc-rank">{entry.rank}位</span>
+        <span className="acc-symbol">{z.symbol}</span>
+        <span className="acc-name">{z.name}</span>
+        {entry.pokemonName && <span className="acc-pokemon">{entry.pokemonName}</span>}
+        {isUser && <span className="acc-badge">あなた</span>}
+        <span className="acc-arrow">{isOpen ? '▲' : '▼'}</span>
       </button>
-
       {isOpen && (
-        <div style={{ padding:'0 14px 14px', borderTop:'1px solid #f3f4f6' }}>
+        <div className="accordion-body">
           <PokemonInfo entry={entry} />
-          <p style={{ fontSize:'0.82rem', color:'#555', fontStyle:'italic', lineHeight:'1.6', margin:'8px 0 0', textAlign:'center' }}>
-            「{entry.comment}」
-          </p>
+          <p className="acc-comment">「{entry.comment}」</p>
         </div>
       )}
     </div>
@@ -385,47 +348,46 @@ export default function App() {
   const userInTop3 = userEntry && userEntry.rank <= 3;
 
   if (loading) return (
-    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100vh', gap:'12px', fontFamily:'sans-serif' }}>
-      <div style={{ width:'40px', height:'40px', border:'4px solid #e5e7eb', borderTopColor:'#7c6bca', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      <p style={{ color:'#888' }}>星の声を聞いています...</p>
+    <div className="loading-screen">
+      <div className="spinner" />
+      <p className="loading-text">星の声を聞いています...</p>
     </div>
   );
 
   return (
-    <div style={S.page}>
+    <div className="app">
       {/* ヘッダー */}
-      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '1.3rem', margin: '0 0 4px' }}>🔮 今日のポケモン星座占い</h1>
-        <p style={{ color: '#888', fontSize: '0.85rem', margin: 0 }}>{dateStr}</p>
-      </div>
+      <header className="header">
+        <h1 className="header-title">🔮 今日のポケモン星座占い</h1>
+        <p className="header-date">{dateStr}</p>
+      </header>
 
-      {/* TOP3 */}
-      <h2 style={S.sectionTitle}>✨ 今日のラッキー星座 TOP3</h2>
-      {top3.map(entry => (
-        <Top3Card key={entry.zodiacId} entry={entry} isUser={entry.zodiacId === userZodiac} />
-      ))}
+      <div className="section">
+        {/* TOP3 */}
+        <h2 className="section-title">✨ 今日のラッキー星座 TOP3</h2>
+        {top3.map(entry => (
+          <Top3Card key={entry.zodiacId} entry={entry} isUser={entry.zodiacId === userZodiac} />
+        ))}
 
-      {/* 自分の星座エリア */}
-      <h2 style={S.sectionTitle}>🌟 あなたの今日の運勢</h2>
-      {showSelector ? (
-        <ZodiacSelector onSelect={handleSelect} />
-      ) : userInTop3 ? (
-        <div style={{ ...S.card, textAlign: 'center' }}>
-          <p style={{ fontSize: '1.5rem', margin: '0 0 8px' }}>🎉</p>
-          <p style={{ fontSize: '0.95rem', lineHeight: '1.7', margin: '0 0 12px' }}>
-            今日は <strong>{userEntry.rank}位</strong> です。<br />
-            上のカードで詳しく見られます ✨
-          </p>
-          <button style={S.changeBtn} onClick={handleChangeZodiac}>星座を変更する</button>
-        </div>
-      ) : userEntry ? (
-        <UserFortuneCard entry={userEntry} onChangeZodiac={handleChangeZodiac} />
-      ) : null}
+        {/* 自分の星座エリア */}
+        <h2 className="section-title">🌟 あなたの今日の運勢</h2>
+        {showSelector ? (
+          <ZodiacSelector onSelect={handleSelect} />
+        ) : userInTop3 ? (
+          <div className="card user-top3-notice">
+            <p className="user-top3-emoji">🎉</p>
+            <p className="user-top3-text">
+              今日は <strong>{userEntry.rank}位</strong> です。<br />
+              上のカードで詳しく見られます ✨
+            </p>
+            <button className="change-btn" onClick={handleChangeZodiac}>星座を変更する</button>
+          </div>
+        ) : userEntry ? (
+          <UserFortuneCard entry={userEntry} onChangeZodiac={handleChangeZodiac} />
+        ) : null}
 
-      {/* 4位〜12位 アコーディオン */}
-      <h2 style={S.sectionTitle}>📋 全星座ランキング（4〜12位）</h2>
-      <div>
+        {/* 4位〜12位 アコーディオン */}
+        <h2 className="section-title">📋 全星座ランキング（4〜12位）</h2>
         {ranking.slice(3).map(entry => (
           <AccordionItem
             key={entry.zodiacId}

@@ -1,0 +1,341 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'YuGothic', 'Meiryo', sans-serif;
+  background: linear-gradient(160deg, #f5f0ff 0%, #fff0f8 50%, #f0f5ff 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
+/* ── ページ全体 ── */
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 48px;
+}
+
+/* ── ヘッダー ── */
+.header {
+  background: linear-gradient(135deg, #7c6bca 0%, #a855f7 100%);
+  padding: 24px 16px 20px;
+  text-align: center;
+  color: white;
+  margin-bottom: 4px;
+}
+.header-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+.header-date {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+/* ── セクション ── */
+.section { padding: 0 16px; }
+.section-title {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #6d54c0;
+  margin: 24px 0 12px;
+}
+
+/* ── カード（基本） ── */
+.card {
+  background: white;
+  border: 1px solid #ede9fe;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 12px rgba(109, 84, 192, 0.07);
+}
+
+/* ── TOP3カード ── */
+.top3-card {
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(109, 84, 192, 0.12);
+  position: relative;
+}
+.top3-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.top3-medal { font-size: 2.2rem; }
+.top3-zodiac-name {
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+.top3-zodiac-date {
+  font-size: 0.72rem;
+  color: #888;
+  margin-top: 1px;
+}
+.top3-comment {
+  font-size: 0.87rem;
+  color: #555;
+  line-height: 1.65;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+/* ── あなたバッジ ── */
+.badge-you {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: linear-gradient(135deg, #f59e0b, #fde68a);
+  color: #7c3a00;
+  font-size: 0.68rem;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
+
+/* ── ポケモン情報 ── */
+.pokemon-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  display: block;
+  margin: 10px auto 6px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.13));
+}
+.pokemon-placeholder {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  margin: 10px auto 6px;
+  background: #f3f4f6;
+  border-radius: 50%;
+}
+.pokemon-name {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #222;
+  margin-bottom: 10px;
+}
+.lucky-rows {
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.lucky-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+.lucky-label { color: #7b7b8a; }
+.lucky-val {
+  font-weight: bold;
+  color: #374151;
+  text-align: right;
+  max-width: 56%;
+}
+
+/* ── 星座セレクター ── */
+.zodiac-selector-title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #374151;
+  margin-bottom: 4px;
+}
+.zodiac-selector-sub {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+.zodiac-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.zodiac-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 4px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  background: white;
+  cursor: pointer;
+  font-family: inherit;
+  gap: 2px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.zodiac-btn:hover, .zodiac-btn:active {
+  border-color: #a78bfa;
+  background: #faf5ff;
+}
+.zodiac-btn-symbol { font-size: 1.4rem; }
+.zodiac-btn-name {
+  font-size: 0.72rem;
+  font-weight: bold;
+  color: #374151;
+}
+.zodiac-btn-date {
+  font-size: 0.58rem;
+  color: #9ca3af;
+}
+
+/* ── 自分TOP3通知カード ── */
+.user-top3-notice {
+  text-align: center;
+  padding: 22px 18px;
+}
+.user-top3-emoji { font-size: 1.8rem; margin-bottom: 8px; }
+.user-top3-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 14px;
+}
+
+/* ── 自分の運勢カード ── */
+.user-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.user-rank {
+  font-size: 1.9rem;
+  font-weight: bold;
+  color: #7c6bca;
+  line-height: 1;
+}
+.user-zodiac-name {
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+.user-zodiac-date {
+  font-size: 0.72rem;
+  color: #888;
+  margin-top: 1px;
+}
+.user-comment {
+  font-size: 0.87rem;
+  color: #555;
+  line-height: 1.65;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+/* ── 変更ボタン ── */
+.change-btn {
+  display: block;
+  margin-left: auto;
+  margin-top: 12px;
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.78rem;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.change-btn:hover { background: #f9fafb; }
+
+/* ── アコーディオン ── */
+.accordion-item {
+  background: white;
+  border-radius: 14px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  border-left: 3px solid transparent;
+}
+.accordion-item.is-user { border-left-color: #a78bfa; }
+.accordion-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+.acc-rank {
+  min-width: 30px;
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #6b7280;
+}
+.acc-symbol { font-size: 1rem; }
+.acc-name {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #374151;
+}
+.acc-pokemon {
+  font-size: 0.78rem;
+  color: #7c6bca;
+}
+.acc-badge {
+  font-size: 0.63rem;
+  background: #fde68a;
+  color: #7c3a00;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.acc-arrow {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  margin-left: 2px;
+}
+.accordion-body {
+  padding: 0 14px 14px;
+  border-top: 1px solid #f5f3ff;
+}
+.acc-comment {
+  font-size: 0.8rem;
+  color: #555;
+  font-style: italic;
+  line-height: 1.6;
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ── ローディング ── */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 14px;
+}
+.spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid #ede9fe;
+  border-top-color: #7c6bca;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  color: #888;
+  font-size: 0.9rem;
+  font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+}
