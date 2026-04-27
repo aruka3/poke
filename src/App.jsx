@@ -216,10 +216,23 @@ const TYPE_WEAKNESS = {
 };
 
 // ── タイプ別アイコン文字 ─────────────────────────────────
-const TYPE_ICON = {
-  fire:'炎', water:'水', grass:'草', electric:'雷', psychic:'超',
-  ghost:'霊', dragon:'龍', fairy:'妖', fighting:'闘', poison:'毒',
-  ground:'地', rock:'岩', ice:'氷', flying:'風', normal:'無',
+const TYPE_META = {
+  normal:   { color:'#A8A878', svg:<><circle cx="12" cy="12" r="7" stroke="white" strokeWidth="3" fill="none"/><circle cx="12" cy="12" r="2.5" fill="white"/></> },
+  fire:     { color:'#F08030', svg:<path d="M12 4C11 7 8 9 8 13c0 2.2 1.8 4 4 4s4-1.8 4-4c0-1.5-.7-2.8-1.5-3.5.3 1.2-.2 2.2-.8 2.8-.4-1.2-.7-2.8-.2-4.7C13.8 6 12.6 4.8 12 4z" fill="white"/> },
+  water:    { color:'#6890F0', svg:<path d="M12 5L7 14c0 2.8 2.2 5 5 5s5-2.2 5-5L12 5z" fill="white"/> },
+  electric: { color:'#F8D030', svg:<polygon points="14,3 8,13 12.5,13 10,21 18,10 13.5,10" fill="white"/> },
+  grass:    { color:'#78C850', svg:<><path d="M12 20v-5" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none"/><path d="M12 15C11 12.5 7 10.5 7 7.5c0-2.5 2.5-4.5 5-4.5s5 2 5 4.5c0 3-4 5-5 7.5z" fill="white"/></> },
+  ice:      { color:'#98D8D8', svg:<path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="white" strokeWidth="2.5" strokeLinecap="round"/> },
+  fighting: { color:'#C03028', svg:<><rect x="8" y="10.5" width="8" height="4.5" rx="2.5" fill="white"/><rect x="9.5" y="7" width="2" height="4.5" rx="1" fill="white"/><rect x="12" y="7" width="2" height="4.5" rx="1" fill="white"/><rect x="14.5" y="8" width="2" height="3.5" rx="1" fill="white"/></> },
+  poison:   { color:'#A040A0', svg:<><circle cx="12" cy="9.5" r="5" stroke="white" strokeWidth="2.5" fill="none"/><circle cx="9.5" cy="8" r="1.5" fill="white"/><circle cx="14.5" cy="8" r="1.5" fill="white"/><path d="M11 15.5h2M12 14.5v5" stroke="white" strokeWidth="2" strokeLinecap="round"/></> },
+  ground:   { color:'#E0C068', svg:<polygon points="12,5 20,19 4,19" fill="white"/> },
+  flying:   { color:'#A890F0', svg:<path d="M5 17C6 12.5 9 10 12 10c3 0 6 2.5 7 6.5-2-2.5-4-3.5-7-3.5S7 14.5 5 17z" fill="white"/> },
+  psychic:  { color:'#F85888', svg:<><ellipse cx="12" cy="12" rx="7" ry="4" stroke="white" strokeWidth="2" fill="none"/><circle cx="12" cy="12" r="2.5" fill="white"/></> },
+  rock:     { color:'#B8A038', svg:<polygon points="12,4 18.5,9.5 16.5,19 7.5,19 5.5,9.5" fill="white"/> },
+  ghost:    { color:'#705898', svg:<path d="M7.5 11C7.5 7.5 9.5 5 12 5s4.5 2.5 4.5 6v8.5l-1.5-1.2-1.5 1.2-1.5-1.2-1.5 1.2-1.5-1.2-1.5 1.2V11z" fill="white"/> },
+  dragon:   { color:'#7038F8', svg:<><path d="M5.5 9.5C5.5 6.5 7.5 4 10.5 4c2.5 0 4.5 2 5 4.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none"/><path d="M5.5 9.5c.5 4 3 7 7 8.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none"/><path d="M9 16l2 3.5-3 .5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></> },
+  fairy:    { color:'#EE99AC', svg:<polygon points="12,3 14.4,8.8 20.6,9.2 15.8,13.2 17.3,19.3 12,16 6.7,19.3 8.2,13.2 3.4,9.2 9.6,8.8" fill="white"/> },
+  _item:    { color:'#c8a800', svg:<polygon points="12,2 13.8,10.2 22,12 13.8,13.8 12,22 10.2,13.8 2,12 10.2,10.2" fill="white"/> },
 };
 
 // ── タイプ別イラスト背景 ─────────────────────────────────
@@ -242,6 +255,16 @@ const TYPE_ILLUST = {
   default:  'linear-gradient(135deg,#e8e0f8,#c8b8f0)',
 };
 
+function TypeIcon({ type, size = 24 }) {
+  const meta = TYPE_META[type] ?? TYPE_META.normal;
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size}
+      style={{ borderRadius:'50%', background: meta.color, display:'block', flexShrink:0 }}>
+      {meta.svg}
+    </svg>
+  );
+}
+
 function PokeCard({ entry, isUser, borderColor }) {
   const z           = ZODIACS.find(z => z.id === entry.zodiacId);
   const primaryType = z.types[0];
@@ -249,9 +272,9 @@ function PokeCard({ entry, isUser, borderColor }) {
   const cardBg      = TYPE_CARD_BG[primaryType] ?? TYPE_CARD_BG.default;
   const illustBg    = TYPE_ILLUST[primaryType]  ?? TYPE_ILLUST.default;
   const weakness    = TYPE_WEAKNESS[primaryType] ?? TYPE_WEAKNESS.default;
-  const rs          = RANK_STYLE[entry.rank] ?? { medal: `${entry.rank}位` };
+  const rs          = RANK_STYLE[entry.rank];
   const hp          = entry.hp ?? '−';
-  const typeIcon    = TYPE_ICON[primaryType] ?? '？';
+  const rankLabel   = rs ? `${rs.medal} ${entry.rank}位` : `${entry.rank}位`;
 
   return (
     <div className="poke-card" style={{ borderColor }}>
@@ -260,7 +283,7 @@ function PokeCard({ entry, isUser, borderColor }) {
         {/* ① 上部バー */}
         <div className="pc-top" style={{ background: headerColor }}>
           <div className="pc-top-left">
-            <span className="pc-type-circle">{typeIcon}</span>
+            <TypeIcon type={primaryType} size={26} />
             <span className="pc-pokemon-title">{z.symbol} {z.name}</span>
           </div>
           <div className="pc-hp-area">
@@ -274,7 +297,7 @@ function PokeCard({ entry, isUser, borderColor }) {
           <span>{z.date}</span>
           <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
             {isUser && <span className="badge-you">あなた</span>}
-            <span className="pc-rank-badge">{rs.medal} {entry.rank}位</span>
+            <span className="pc-rank-badge">{rankLabel}</span>
           </div>
         </div>
 
@@ -296,7 +319,7 @@ function PokeCard({ entry, isUser, borderColor }) {
         <div className="pc-move">
           <div className="pc-move-row">
             <div className="pc-move-left">
-              <span className="pc-energy" style={{ background: headerColor, color: '#fff' }}>{typeIcon}</span>
+              <TypeIcon type={primaryType} size={22} />
               <span className="pc-move-name">{entry.luckyMove}</span>
             </div>
           </div>
@@ -309,7 +332,7 @@ function PokeCard({ entry, isUser, borderColor }) {
         <div className="pc-move">
           <div className="pc-move-row">
             <div className="pc-move-left">
-              <span className="pc-energy" style={{ background: '#c8a800', color: '#fff' }}>★</span>
+              <TypeIcon type="_item" size={22} />
               <span className="pc-move-name">ラッキーアイテム</span>
             </div>
             <span className="pc-move-right">{entry.luckyItem}</span>
@@ -326,7 +349,7 @@ function PokeCard({ entry, isUser, borderColor }) {
           </div>
           <div className="pc-footer-col">
             <span className="pc-footer-label">タイプ</span>
-            <span className="pc-footer-val">{typeIcon}</span>
+            <TypeIcon type={primaryType} size={20} />
           </div>
           <div className="pc-footer-col">
             <span className="pc-footer-label">にげる</span>
