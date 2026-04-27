@@ -184,51 +184,78 @@ function generateRanking(seed) {
   });
 }
 
-// ── TOP3スタイル (rank別のカラーのみ inline) ──────────────
+// ── ランク別カード設定 ────────────────────────────────────
 const RANK_STYLE = {
-  1: { bg: 'linear-gradient(135deg,#fffbeb,#fef3c7)', border: '#f59e0b', medal: '🥇' },
-  2: { bg: 'linear-gradient(135deg,#f8fafc,#e2e8f0)', border: '#94a3b8', medal: '🥈' },
-  3: { bg: 'linear-gradient(135deg,#fff7ed,#fde8d0)', border: '#fb923c', medal: '🥉' },
+  1: { border: '#e0c050', illust: 'linear-gradient(135deg,#fff9db,#ffe88a)', medal: '🥇', hp: 90 },
+  2: { border: '#a0aec0', illust: 'linear-gradient(135deg,#eef2f7,#c8d6e5)', medal: '🥈', hp: 70 },
+  3: { border: '#d4956a', illust: 'linear-gradient(135deg,#fff3eb,#fdd5b0)', medal: '🥉', hp: 55 },
 };
 
-// ── TOP3 カード ─────────────────────────────────────────────
-function PokemonInfo({ entry }) {
-  return (
-    <>
-      {entry.sprite
-        ? <img src={entry.sprite} alt={entry.pokemonName} className="pokemon-img" />
-        : <div className="pokemon-placeholder">？</div>
-      }
-      <p className="pokemon-name">{entry.pokemonName}</p>
-      <div className="lucky-rows">
-        <div className="lucky-row">
-          <span className="lucky-label">⚡ ラッキーわざ</span>
-          <span className="lucky-val">{entry.luckyMove}</span>
-        </div>
-        <div className="lucky-row">
-          <span className="lucky-label">🎁 ラッキーアイテム</span>
-          <span className="lucky-val">{entry.luckyItem}</span>
-        </div>
-      </div>
-    </>
-  );
-}
+// ── タイプ別イラスト背景カラー ────────────────────────────
+const TYPE_ILLUST = {
+  fire:     'linear-gradient(135deg,#ffe0c0,#ffaa60)',
+  water:    'linear-gradient(135deg,#c8e0ff,#88b0ff)',
+  grass:    'linear-gradient(135deg,#c8f0c0,#88d870)',
+  electric: 'linear-gradient(135deg,#fff8b0,#ffe840)',
+  psychic:  'linear-gradient(135deg,#ffc8e0,#ff88b8)',
+  ghost:    'linear-gradient(135deg,#d0c0e8,#9878c8)',
+  dragon:   'linear-gradient(135deg,#c8c0ff,#8060f8)',
+  fairy:    'linear-gradient(135deg,#ffd8e8,#ffaac8)',
+  fighting: 'linear-gradient(135deg,#ffc0b0,#e06050)',
+  poison:   'linear-gradient(135deg,#e8c0f8,#b870d8)',
+  ground:   'linear-gradient(135deg,#f0e0a0,#d0b050)',
+  rock:     'linear-gradient(135deg,#e0d8b0,#c0a840)',
+  ice:      'linear-gradient(135deg,#c8f0f0,#90d8d8)',
+  flying:   'linear-gradient(135deg,#d8d0ff,#b0a0f8)',
+  normal:   'linear-gradient(135deg,#eeeedc,#c8c8a8)',
+  default:  'linear-gradient(135deg,#e8e0f8,#c8b8f0)',
+};
 
 function Top3Card({ entry, isUser }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
   const rs = RANK_STYLE[entry.rank];
+  const illustBg = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
   return (
-    <div className="top3-card" style={{ background: rs.bg, border: `2px solid ${rs.border}` }}>
+    <div className="poke-card" style={{ borderColor: rs.border }}>
       {isUser && <span className="badge-you">あなた</span>}
-      <div className="top3-card-header">
-        <span className="top3-medal">{rs.medal}</span>
-        <div>
-          <div className="top3-zodiac-name">{z.symbol} {z.name}</div>
-          <div className="top3-zodiac-date">{z.date}</div>
+
+      {/* カード上部 */}
+      <div className="poke-card-top">
+        <div className="poke-card-left">
+          <span className="poke-card-medal">{rs.medal}</span>
+          <div>
+            <div className="poke-card-zodiac-name">{z.symbol} {z.name}</div>
+            <div className="poke-card-zodiac-date">{z.date}</div>
+          </div>
+        </div>
+        <div className="poke-card-hp">
+          HP <span className="poke-card-hp-val">{rs.hp}</span>
         </div>
       </div>
-      <p className="top3-comment">「{entry.comment}」</p>
-      <PokemonInfo entry={entry} />
+
+      {/* イラスト枠 */}
+      <div className="poke-card-illust" style={{ background: illustBg }}>
+        {entry.sprite
+          ? <img src={entry.sprite} alt={entry.pokemonName} className="poke-card-sprite" />
+          : <span className="poke-card-no-sprite">？</span>
+        }
+      </div>
+
+      {/* カード下部 */}
+      <div className="poke-card-body">
+        <p className="poke-card-name">{entry.pokemonName ?? '...'}</p>
+        <p className="poke-card-comment">「{entry.comment}」</p>
+        <div className="poke-card-moves">
+          <div className="poke-card-move-row">
+            <span className="poke-card-move-label">⚡ ラッキーわざ</span>
+            <span className="poke-card-move-val">{entry.luckyMove}</span>
+          </div>
+          <div className="poke-card-move-row">
+            <span className="poke-card-move-label">🎁 ラッキーアイテム</span>
+            <span className="poke-card-move-val">{entry.luckyItem}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -255,18 +282,42 @@ function ZodiacSelector({ onSelect }) {
 // ── 自分の運勢カード (TOP3外) ───────────────────────────────
 function UserFortuneCard({ entry, onChangeZodiac }) {
   const z = ZODIACS.find(z => z.id === entry.zodiacId);
+  const illustBg = TYPE_ILLUST[z.types[0]] ?? TYPE_ILLUST.default;
   return (
-    <div className="card">
-      <div className="user-card-header">
-        <span className="user-rank">{entry.rank}位</span>
-        <div>
-          <div className="user-zodiac-name">{z.symbol} {z.name}</div>
-          <div className="user-zodiac-date">{z.date}</div>
+    <div className="poke-card" style={{ borderColor: '#a78bfa' }}>
+      <div className="poke-card-top">
+        <div className="poke-card-left">
+          <span style={{ fontSize:'1.4rem', fontWeight:'bold', color:'#7c6bca', lineHeight:1 }}>{entry.rank}位</span>
+          <div>
+            <div className="poke-card-zodiac-name">{z.symbol} {z.name}</div>
+            <div className="poke-card-zodiac-date">{z.date}</div>
+          </div>
         </div>
+        <span className="badge-you" style={{ position:'static', marginLeft:'auto' }}>あなた</span>
       </div>
-      <p className="user-comment">「{entry.comment}」</p>
-      <PokemonInfo entry={entry} />
-      <button className="change-btn" onClick={onChangeZodiac}>星座を変更する</button>
+
+      <div className="poke-card-illust" style={{ background: illustBg }}>
+        {entry.sprite
+          ? <img src={entry.sprite} alt={entry.pokemonName} className="poke-card-sprite" />
+          : <span className="poke-card-no-sprite">？</span>
+        }
+      </div>
+
+      <div className="poke-card-body">
+        <p className="poke-card-name">{entry.pokemonName ?? '...'}</p>
+        <p className="poke-card-comment">「{entry.comment}」</p>
+        <div className="poke-card-moves">
+          <div className="poke-card-move-row">
+            <span className="poke-card-move-label">⚡ ラッキーわざ</span>
+            <span className="poke-card-move-val">{entry.luckyMove}</span>
+          </div>
+          <div className="poke-card-move-row">
+            <span className="poke-card-move-label">🎁 ラッキーアイテム</span>
+            <span className="poke-card-move-val">{entry.luckyItem}</span>
+          </div>
+        </div>
+        <button className="change-btn" onClick={onChangeZodiac}>星座を変更する</button>
+      </div>
     </div>
   );
 }
@@ -286,8 +337,19 @@ function AccordionItem({ entry, isUser, isOpen, onToggle }) {
       </button>
       {isOpen && (
         <div className="accordion-body">
-          <PokemonInfo entry={entry} />
+          {entry.sprite
+            ? <img src={entry.sprite} alt={entry.pokemonName} style={{ width:'80px', height:'80px', objectFit:'contain', display:'block', margin:'8px auto', filter:'drop-shadow(0 3px 6px rgba(0,0,0,0.15))' }} />
+            : <div style={{ width:'80px', height:'80px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'2.5rem', margin:'8px auto', background:'#f3f4f6', borderRadius:'50%' }}>？</div>
+          }
           <p className="acc-comment">「{entry.comment}」</p>
+          <div style={{ display:'flex', flexDirection:'column', gap:'4px', marginTop:'6px' }}>
+            <div className="poke-card-move-row">
+              <span className="poke-card-move-label">⚡ {entry.luckyMove}</span>
+            </div>
+            <div className="poke-card-move-row">
+              <span className="poke-card-move-label">🎁 {entry.luckyItem}</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

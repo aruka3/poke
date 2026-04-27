@@ -14,6 +14,170 @@ body {
   padding-bottom: 48px;
 }
 
+/* ══════════════════════════════════
+   ポケモンカード (TOP3)
+══════════════════════════════════ */
+.poke-card {
+  border-radius: 16px;
+  margin-bottom: 16px;
+  border: 4px solid #e0c96e;
+  background: #fffff8;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.15),
+    0 2px 6px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 光沢シャイン */
+.poke-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(255,255,255,0.45) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: cardShine 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+@keyframes cardShine {
+  0%   { background-position: 200% center; }
+  50%  { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* カード上部 (名前・ランク) */
+.poke-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 6px;
+}
+.poke-card-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.poke-card-medal { font-size: 1.5rem; line-height: 1; }
+.poke-card-zodiac-name {
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+}
+.poke-card-zodiac-date {
+  font-size: 0.62rem;
+  color: rgba(0,0,0,0.45);
+  margin-top: 1px;
+}
+.poke-card-hp {
+  font-size: 0.72rem;
+  color: #666;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+}
+.poke-card-hp-val {
+  font-size: 1.2rem;
+  color: #c00;
+  font-weight: bold;
+}
+
+/* イラスト枠 */
+.poke-card-illust {
+  margin: 4px 10px 6px;
+  border-radius: 10px;
+  border: 2px solid rgba(0,0,0,0.12);
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+/* イラスト枠内の放射状ドット模様 */
+.poke-card-illust::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+.poke-card-sprite {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.25));
+  position: relative;
+  z-index: 1;
+}
+.poke-card-no-sprite {
+  font-size: 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* カード下部 */
+.poke-card-body {
+  padding: 4px 14px 14px;
+}
+.poke-card-name {
+  font-size: 1.05rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.poke-card-comment {
+  font-size: 0.78rem;
+  color: #555;
+  font-style: italic;
+  line-height: 1.6;
+  text-align: center;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding: 6px 0;
+  margin-bottom: 8px;
+}
+.poke-card-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.poke-card-move-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+.poke-card-move-label { color: #666; }
+.poke-card-move-val {
+  font-weight: bold;
+  color: #1a1a1a;
+  text-align: right;
+  max-width: 55%;
+}
+
+/* あなたバッジ */
+.badge-you {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #f59e0b, #fde68a);
+  color: #7c3a00;
+  font-size: 0.68rem;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  z-index: 4;
+}
+
 /* ── ヘッダー ── */
 .header {
   background: linear-gradient(135deg, #7c6bca 0%, #a855f7 100%);
@@ -52,99 +216,7 @@ body {
   box-shadow: 0 2px 12px rgba(109, 84, 192, 0.07);
 }
 
-/* ── TOP3カード ── */
-.top3-card {
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 16px rgba(109, 84, 192, 0.12);
-  position: relative;
-}
-.top3-card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-.top3-medal { font-size: 2.2rem; }
-.top3-zodiac-name {
-  font-size: 1.05rem;
-  font-weight: bold;
-}
-.top3-zodiac-date {
-  font-size: 0.72rem;
-  color: #888;
-  margin-top: 1px;
-}
-.top3-comment {
-  font-size: 0.87rem;
-  color: #555;
-  line-height: 1.65;
-  font-style: italic;
-  margin-bottom: 4px;
-}
 
-/* ── あなたバッジ ── */
-.badge-you {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: linear-gradient(135deg, #f59e0b, #fde68a);
-  color: #7c3a00;
-  font-size: 0.68rem;
-  font-weight: bold;
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.03em;
-}
-
-/* ── ポケモン情報 ── */
-.pokemon-img {
-  width: 110px;
-  height: 110px;
-  object-fit: contain;
-  display: block;
-  margin: 10px auto 6px;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.13));
-}
-.pokemon-placeholder {
-  width: 110px;
-  height: 110px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.8rem;
-  margin: 10px auto 6px;
-  background: #f3f4f6;
-  border-radius: 50%;
-}
-.pokemon-name {
-  text-align: center;
-  font-weight: bold;
-  font-size: 1rem;
-  color: #222;
-  margin-bottom: 10px;
-}
-.lucky-rows {
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.lucky-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-}
-.lucky-label { color: #7b7b8a; }
-.lucky-val {
-  font-weight: bold;
-  color: #374151;
-  text-align: right;
-  max-width: 56%;
-}
 
 /* ── 星座セレクター ── */
 .zodiac-selector-title {
