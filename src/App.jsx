@@ -215,6 +215,13 @@ const TYPE_WEAKNESS = {
   ice:'炎×2', flying:'電×2', normal:'闘×2', default:'−',
 };
 
+// ── タイプ別アイコン文字 ─────────────────────────────────
+const TYPE_ICON = {
+  fire:'炎', water:'水', grass:'草', electric:'雷', psychic:'超',
+  ghost:'霊', dragon:'龍', fairy:'妖', fighting:'闘', poison:'毒',
+  ground:'地', rock:'岩', ice:'氷', flying:'風', normal:'無',
+};
+
 // ── タイプ別イラスト背景 ─────────────────────────────────
 const TYPE_ILLUST = {
   fire:     'linear-gradient(135deg,#ffe0c0,#ffaa60)',
@@ -244,56 +251,89 @@ function PokeCard({ entry, isUser, borderColor }) {
   const weakness    = TYPE_WEAKNESS[primaryType] ?? TYPE_WEAKNESS.default;
   const rs          = RANK_STYLE[entry.rank] ?? { medal: `${entry.rank}位` };
   const hp          = entry.hp ?? '−';
+  const typeIcon    = TYPE_ICON[primaryType] ?? '？';
 
   return (
-    <div className="poke-card" style={{ borderColor, background: cardBg }}>
-      {/* ① ヘッダー帯: 名前 + HP */}
-      <div className="poke-card-top" style={{ background: headerColor }}>
-        <div className="poke-card-left">
-          <span className="poke-card-medal">{rs.medal}</span>
-          <div>
-            <div className="poke-card-zodiac-name">{z.symbol} {z.name}</div>
-            <div className="poke-card-zodiac-date">{z.date}</div>
+    <div className="poke-card" style={{ borderColor }}>
+      <div className="pc-inner" style={{ background: cardBg }}>
+
+        {/* ① 上部バー */}
+        <div className="pc-top" style={{ background: headerColor }}>
+          <div className="pc-top-left">
+            <span className="pc-type-circle">{typeIcon}</span>
+            <span className="pc-pokemon-title">{z.symbol} {z.name}</span>
           </div>
-        </div>
-        <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-          {isUser && <span className="badge-you" style={{ position:'static' }}>あなた</span>}
-          <div className="poke-card-hp">HP <span className="poke-card-hp-val">{hp}</span></div>
-        </div>
-      </div>
-
-      {/* ② イラスト枠 */}
-      <div className="poke-card-illust" style={{ background: illustBg }}>
-        {entry.sprite
-          ? <img src={entry.sprite} alt={entry.pokemonName} className="poke-card-sprite" />
-          : <span className="poke-card-no-sprite">？</span>}
-      </div>
-
-      {/* ③ ポケモン名 */}
-      <div className="poke-card-body">
-        <p className="poke-card-name">{entry.pokemonName ?? '...'}</p>
-
-        {/* ④ わざ行 */}
-        <div className="poke-move-section">
-          <div className="poke-move-header">
-            <span className="poke-move-name">⚡ {entry.luckyMove}</span>
-          </div>
-          <p className="poke-move-desc">「{entry.comment}」</p>
-        </div>
-
-        <div className="poke-move-section" style={{ marginTop:'6px' }}>
-          <div className="poke-move-header">
-            <span className="poke-move-name">🎁 ラッキーアイテム</span>
-            <span className="poke-move-damage">{entry.luckyItem}</span>
+          <div className="pc-hp-area">
+            <span className="pc-hp-label">HP</span>
+            <span className="pc-hp-val">{hp}</span>
           </div>
         </div>
 
-        {/* ⑤ フッター: 弱点・耐性・にげる */}
-        <div className="poke-footer">
-          <span><b>弱点</b> {weakness}</span>
-          <span><b>耐性</b> −</span>
-          <span><b>にげる</b> ●</span>
+        {/* ② サブタイトル */}
+        <div className="pc-subtitle">
+          <span>{z.date}</span>
+          <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+            {isUser && <span className="badge-you">あなた</span>}
+            <span className="pc-rank-badge">{rs.medal} {entry.rank}位</span>
+          </div>
         </div>
+
+        {/* ③ イラスト */}
+        <div className="pc-illust-wrap">
+          <div className="pc-illust" style={{ background: illustBg }}>
+            {entry.sprite
+              ? <img src={entry.sprite} alt={entry.pokemonName} className="pc-sprite" />
+              : <span className="pc-no-sprite">？</span>}
+          </div>
+        </div>
+
+        {/* ポケモン名 */}
+        <div className="pc-poke-name">{entry.pokemonName ?? '...'}</div>
+
+        <hr className="pc-divider" />
+
+        {/* ④ わざ1: ラッキーわざ */}
+        <div className="pc-move">
+          <div className="pc-move-row">
+            <div className="pc-move-left">
+              <span className="pc-energy" style={{ background: headerColor, color: '#fff' }}>{typeIcon}</span>
+              <span className="pc-move-name">{entry.luckyMove}</span>
+            </div>
+          </div>
+          <p className="pc-move-desc">「{entry.comment}」</p>
+        </div>
+
+        <hr className="pc-divider" />
+
+        {/* ⑤ わざ2: ラッキーアイテム */}
+        <div className="pc-move">
+          <div className="pc-move-row">
+            <div className="pc-move-left">
+              <span className="pc-energy" style={{ background: '#c8a800', color: '#fff' }}>★</span>
+              <span className="pc-move-name">ラッキーアイテム</span>
+            </div>
+            <span className="pc-move-right">{entry.luckyItem}</span>
+          </div>
+        </div>
+
+        <hr className="pc-divider" />
+
+        {/* ⑥ フッター */}
+        <div className="pc-footer">
+          <div className="pc-footer-col">
+            <span className="pc-footer-label">弱点</span>
+            <span className="pc-footer-val">{weakness}</span>
+          </div>
+          <div className="pc-footer-col">
+            <span className="pc-footer-label">タイプ</span>
+            <span className="pc-footer-val">{typeIcon}</span>
+          </div>
+          <div className="pc-footer-col">
+            <span className="pc-footer-label">にげる</span>
+            <span className="pc-footer-val">●●</span>
+          </div>
+        </div>
+
       </div>
     </div>
   );
@@ -356,12 +396,8 @@ function AccordionItem({ entry, isUser, isOpen, onToggle }) {
           }
           <p className="acc-comment">「{entry.comment}」</p>
           <div style={{ display:'flex', flexDirection:'column', gap:'4px', marginTop:'6px' }}>
-            <div className="poke-card-move-row">
-              <span className="poke-card-move-label">⚡ {entry.luckyMove}</span>
-            </div>
-            <div className="poke-card-move-row">
-              <span className="poke-card-move-label">🎁 {entry.luckyItem}</span>
-            </div>
+            <div style={{ fontSize:'0.8rem', color:'#555', textAlign:'center' }}>⚡ {entry.luckyMove}</div>
+            <div style={{ fontSize:'0.8rem', color:'#555', textAlign:'center' }}>🎁 {entry.luckyItem}</div>
           </div>
         </div>
       )}
